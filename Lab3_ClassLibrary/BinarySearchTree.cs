@@ -69,14 +69,14 @@ namespace Lab3_ClassLibrary
             return output;
         }
 
-        public List<VideoGame> Search(string title, string genre = null, string developer, Platform? platform, DateTime? releaseDate)
+        public List<VideoGame> Search(string title, string developer, string genre = null, Platform? platform = null, DateTime? releaseDate = null)
         {
             List<VideoGame> results = new List<VideoGame>();
-            Search(root, title, genre, developer, platform, releaseDate, results);
+            Search(root, title, developer, genre, platform, releaseDate, results);
             return results;
         }
 
-        private void Search(GameNode node, string title, string genre, string developer, Platform? platform, DateTime? releaseDate, List<VideoGame> results)
+        private void Search(GameNode node, string title, string developer, string genre, Platform? platform, DateTime? releaseDate, List<VideoGame> results)
         {
             if (node == null) return;
 
