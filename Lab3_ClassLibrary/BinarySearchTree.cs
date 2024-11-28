@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Media.Casting;
 
 namespace Lab3_ClassLibrary
 {
@@ -40,6 +41,32 @@ namespace Lab3_ClassLibrary
             return newNode;
         }
 
+        public string AllTheGames()
+        {
+            Queue<TreeNode> queue = new Queue<TreeNode>();
 
+            string output = "LIST OF GAMES:\n\n";
+
+            if (root == null) return $"There are no games in your list";
+
+            queue.Enqueue(root);
+
+            while (queue.Count > 0)
+            {
+                // Pop the top node in the queue
+                TreeNode current = queue.Dequeue();
+
+                // Attach the nodes information to the outputstring
+                output += $"{current.val.Title}" +
+                    $"\n\tDeveloper: {current.val.Developer}" +
+                    $"\n\tPlatform: {~current.val.Platform}" +
+                    $"\n\tRelease Date: {current.val.ReleaseDate.ToShortDateString()}\n\n";
+
+                if (current.right != null) queue.Enqueue(current.right);
+                if (current.left != null) queue.Enqueue(current.left);
+            }
+
+            return output;
+        }
     }
 }
