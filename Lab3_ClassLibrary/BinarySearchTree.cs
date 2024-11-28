@@ -69,7 +69,7 @@ namespace Lab3_ClassLibrary
             return output;
         }
 
-        public List<VideoGame> Search(string title, string developer, string genre = null, Platform? platform = null, DateTime? releaseDate = null)
+        public List<VideoGame> Search(string title = null, string developer = null, string genre = null, Platform? platform = null, DateTime? releaseDate = null)
         {
             List<VideoGame> results = new List<VideoGame>();
             Search(root, title, developer, genre, platform, releaseDate, results);
