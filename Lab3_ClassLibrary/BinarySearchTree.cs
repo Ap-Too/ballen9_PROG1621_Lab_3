@@ -57,10 +57,7 @@ namespace Lab3_ClassLibrary
                 GameNode current = queue.Dequeue();
 
                 // Attach the nodes information to the outputstring
-                output += $"{current.game.Title}" +
-                    $"\n\tDeveloper: {current.game.Developer}" +
-                    $"\n\tPlatform: {~current.game.Platform}" +
-                    $"\n\tRelease Date: {current.game.ReleaseDate.ToShortDateString()}\n\n";
+                output += $"{current.ToString()}";
 
                 if (current.right != null) queue.Enqueue(current.right);
                 if (current.left != null) queue.Enqueue(current.left);

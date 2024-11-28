@@ -34,7 +34,11 @@ namespace Lab3_ClassLibrary
 
 
         public override string ToString() => 
-            $"{Title}\nGenre: {Genre}\nDeveloper: {Developer}\nRelease Date: {ReleaseDate.ToShortDateString()}\nPlatform: {Platform}";
+            $"{Title}" +
+            $"\n\tDeveloper: {Developer}" +
+            $"\n\tPlatform: {Platform}" +
+            $"\n\tRelease Date: {ReleaseDate.ToShortDateString()}" +
+            $"\n\tGenre: {Genre}";
         
         public int CompareTo(VideoGame other)
         {
