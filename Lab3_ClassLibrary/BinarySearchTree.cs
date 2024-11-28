@@ -12,14 +12,14 @@ namespace Lab3_ClassLibrary
 
         public TreeNode Root => root;
 
-        public BinarySearchTree(List<> games)
+        public BinarySearchTree(List<VideoGame> games)
         {
             games.Sort();
 
             root = Create(0, games.Count - 1, games);
         }
 
-        private TreeNode Create(int min, int max, List<> games)
+        private TreeNode Create(int min, int max, List<VideoGame> games)
         {
             // return null if out of scope of the List
             if (max < min) return null;
@@ -39,5 +39,7 @@ namespace Lab3_ClassLibrary
             // Return the node that was created
             return newNode;
         }
+
+
     }
 }
