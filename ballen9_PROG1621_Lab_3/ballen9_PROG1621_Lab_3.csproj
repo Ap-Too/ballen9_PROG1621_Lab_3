@@ -154,6 +154,12 @@
       <Version>6.2.14</Version>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lab3_ClassLibrary\Lab3_ClassLibrary.csproj">
+      <Project>{5334c1c2-d210-40bb-8e5c-ebf6039ce226}</Project>
+      <Name>Lab3_ClassLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>
