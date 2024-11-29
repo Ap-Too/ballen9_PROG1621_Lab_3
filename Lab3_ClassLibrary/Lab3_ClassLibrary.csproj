@@ -121,6 +121,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="BinarySearchTree.cs" />
+    <Compile Include="FileReader.cs" />
     <Compile Include="Platform.cs" />
     <Compile Include="GameNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
