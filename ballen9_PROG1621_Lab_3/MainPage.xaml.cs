@@ -16,6 +16,7 @@ using Windows.UI.Xaml.Navigation;
 using Lab3_ClassLibrary;
 using Windows.UI.ViewManagement;
 using Windows.ApplicationModel;
+using System.ComponentModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -48,6 +49,23 @@ namespace ballen9_PROG1621_Lab_3
             BinarySearchTree tree = new BinarySearchTree(games);
 
             txtGameList.Text = tree.AllTheGames();
+
+            cmbPlatform.ItemsSource = Enum.GetValues(typeof(Platform))
+                .Cast<Platform>()
+                .Select(e => new
+                {
+                    Value = e,
+                    Description = e.GetType()
+                        .GetField(e.ToString())
+                        .GetCustomAttributes(typeof(DescriptionAttribute), false)
+                        .FirstOrDefault() is DescriptionAttribute descriptionAttribute
+                        ? descriptionAttribute.Description : e.ToString()
+                })
+                .ToList();
+
+            cmbPlatform.DisplayMemberPath = "Description";
+            cmbPlatform.SelectedValuePath = "Value";
+            cmbPlatform.SelectedIndex = 0;
         }
 
         private async void ReadInList(List<VideoGame> games)
@@ -55,23 +73,38 @@ namespace ballen9_PROG1621_Lab_3
             games = await FileReader.ReadGameList();
         }
 
-        // Add in a method for the user to add in a new object to the list.
-        // Vaildate the information given by the user
-        // Add the new object if there are no duplicates in the list
-        // Use the display method to show the updated list after the new object is created
-
+        // Any changes to the object collection should be saved to the local text file when the program closes
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
+        {
+            await FileReader.SaveGameList(games);
+        }
 
         // Create a control to search for a specific object.
         // The user MUST specify at least two parameters for the search
         // Validate both values before searching the Binary Tree
         // The search is looking for EXACT MATCHES
         // Display the result of the search in a message dialogue
-
-
-        // Any changes to the object collection should be saved to the local text file when the program closes
-        private async void OnSuspending(object sender, SuspendingEventArgs e)
+        private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
-            await FileReader.SaveGameList(games);
+
+        }
+
+        // Add in a method for the user to add in a new object to the list.
+        // Vaildate the information given by the user
+        // Add the new object if there are no duplicates in the list
+        // Use the display method to show the updated list after the new object is created
+        private void btnAdd_Click(object sender, RoutedEventArgs e)
+        {
+            // Check if all boxes are filled out correctly
+        }
+
+        private void btnClear_Click(object sender, RoutedEventArgs e)
+        {
+            txtTitle.Text = string.Empty;
+            txtGenre.Text = string.Empty;
+            txtDeveloper.Text= string.Empty;
+            cmbPlatform.SelectedIndex = 0;
+            dtpReleaseDate.SelectedDate = null;
         }
     }
 }
