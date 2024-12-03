@@ -1,22 +1,14 @@
 ﻿using Lab3_ClassLibrary;
 using System;
 using System.Collections.Generic;
-using System.IO;
+using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+using Windows.ApplicationModel;
 using Windows.Foundation;
-using Windows.Foundation.Collections;
+using Windows.UI.Popups;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
-using Lab3_ClassLibrary;
-using Windows.UI.ViewManagement;
-using Windows.ApplicationModel;
-using System.ComponentModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -28,6 +20,8 @@ namespace ballen9_PROG1621_Lab_3
     public sealed partial class MainPage : Page
     {
         List<VideoGame> games = new List<VideoGame>();
+
+        BinarySearchTree tree;
 
         public MainPage()
         {
@@ -46,7 +40,7 @@ namespace ballen9_PROG1621_Lab_3
             // Sort the list of games and create a binary tree out of the sorted list
             if (games.Count > 0) games.Sort();
 
-            BinarySearchTree tree = new BinarySearchTree(games);
+            tree = new BinarySearchTree(games);
 
             txtGameList.Text = tree.AllTheGames();
 
@@ -65,7 +59,9 @@ namespace ballen9_PROG1621_Lab_3
 
             cmbPlatform.DisplayMemberPath = "Description";
             cmbPlatform.SelectedValuePath = "Value";
-            cmbPlatform.SelectedIndex = 0;
+            cmbPlatform.SelectedIndex = -1;
+
+            dtpReleaseDate.MaxDate = new DateTimeOffset().AddMonths(1);
         }
 
         private async void ReadInList(List<VideoGame> games)
@@ -86,7 +82,41 @@ namespace ballen9_PROG1621_Lab_3
         // Display the result of the search in a message dialogue
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
+            // Check if at least two boxes are filled out correctly
+            int fieldCount = 0;
 
+            if (!string.IsNullOrWhiteSpace(txtTitle.Text))
+                fieldCount++;
+            if (!string.IsNullOrWhiteSpace(txtGenre.Text))
+                fieldCount++;
+            if (!string.IsNullOrWhiteSpace(txtDeveloper.Text))
+                fieldCount++;
+            if (dtpReleaseDate.Date != null)
+                fieldCount++;
+            if (cmbPlatform.SelectedIndex != -1)
+                fieldCount++;
+
+            // Search for the exact match if the field count is >= 2
+            if (fieldCount >= 2)
+            {
+                VideoGame temp = tree.Search(txtTitle.Text.Trim(),txtGenre.Text.Trim(),txtDeveloper.Text.Trim(),
+                    (Platform)cmbPlatform.SelectedValue, dtpReleaseDate.Date.Value.DateTime);
+
+                if (temp != null)
+                {
+                    MessageDialog msg = new MessageDialog($"There is a match in your list.\n\n{temp.ToString()}");
+                    msg.ShowAsync();
+                }
+                else
+                {
+                    MessageDialog msg = new MessageDialog($"There was no match for your search");
+                }
+            }
+            else
+            {
+                MessageDialog msg = new MessageDialog("Please fill out at least 2 fields to search for.");
+                msg.ShowAsync();
+            }
         }
 
         // Add in a method for the user to add in a new object to the list.
@@ -96,15 +126,56 @@ namespace ballen9_PROG1621_Lab_3
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             // Check if all boxes are filled out correctly
+            bool filled = true;
+
+            if (string.IsNullOrWhiteSpace(txtTitle.Text))
+                filled = false;
+            if (string.IsNullOrWhiteSpace(txtGenre.Text))
+                filled = false;
+            if (string.IsNullOrWhiteSpace(txtDeveloper.Text))
+                filled = false;
+            if (dtpReleaseDate.Date == null && dtpReleaseDate.Date.Value.Month <= new DateTimeOffset().Month + 1)
+                filled = false;
+            if (cmbPlatform.SelectedIndex == -1)
+                filled = false;
+
+            // If all are filled create a new VideoGame object otherwise ask the user to fill out all the info 
+            if (filled)
+            {
+                VideoGame newGame = new VideoGame(txtTitle.Text.Trim(), txtGenre.Text.Trim(), txtDeveloper.Text.Trim(), dtpReleaseDate.Date.Value.DateTime, (Platform)cmbPlatform.SelectedValue);
+
+                // check it against the existing list, if it already exists don't add it otherwise add it
+                if (!games.Contains(newGame))
+                {
+                    games.Add(newGame);
+                    txtGameList.Text = tree.AllTheGames();
+                    ClearFields();
+                }
+                else
+                {
+                    MessageDialog msg = new MessageDialog($"This Game:\t {newGame.ToString()}\nalready exists in your list.");
+                    msg.ShowAsync();
+                }
+            }
+            else
+            {
+                MessageDialog msg = new MessageDialog("Please fill out all information for the game");
+                msg.ShowAsync();
+            }
         }
 
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
+            ClearFields();
+        }
+
+        private void ClearFields()
+        {
             txtTitle.Text = string.Empty;
             txtGenre.Text = string.Empty;
-            txtDeveloper.Text= string.Empty;
+            txtDeveloper.Text = string.Empty;
             cmbPlatform.SelectedIndex = 0;
-            dtpReleaseDate.SelectedDate = null;
+            dtpReleaseDate.Date = null;
         }
     }
 }

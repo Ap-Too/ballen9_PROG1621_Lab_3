@@ -66,16 +66,16 @@ namespace Lab3_ClassLibrary
             return output;
         }
 
-        public List<VideoGame> Search(string title = null, string developer = null, string genre = null, Platform? platform = null, DateTime? releaseDate = null)
+        public VideoGame Search(string title = null, string developer = null, string genre = null, Platform? platform = null, DateTime? releaseDate = null)
         {
-            List<VideoGame> results = new List<VideoGame>();
-            Search(root, title, developer, genre, platform, releaseDate, results);
-            return results;
+            VideoGame result = new VideoGame("temp", "temp", "temp", new DateTime(), Platform.Xbox);
+            Search(root, title, developer, genre, platform, releaseDate, result);
+            return result;
         }
 
-        private void Search(GameNode node, string title, string developer, string genre, Platform? platform, DateTime? releaseDate, List<VideoGame> results)
+        private VideoGame Search(GameNode node, string title, string developer, string genre, Platform? platform, DateTime? releaseDate, VideoGame result)
         {
-            if (node == null) return;
+            if (node == null) return null;
 
             bool matches = true;
 
@@ -91,10 +91,15 @@ namespace Lab3_ClassLibrary
             if (releaseDate.HasValue && node.game.ReleaseDate.Date != releaseDate.Value.Date)
                 matches = false;
 
-            if (matches) results.Add(node.game);
+            if (matches)
+            {
+                result = node.game;
+                return result;
+            }
 
-            Search(node.left, title, genre, developer, platform, releaseDate, results);
-            Search(node.right, title, genre, developer, platform, releaseDate, results);
+            VideoGame left = Search(node.left, title, genre, developer, platform, releaseDate, result);
+            if (left != null) return left;
+            return Search(node.right, title, genre, developer, platform, releaseDate, result);
         }
     }
 }

@@ -45,7 +45,8 @@
                 <TextBox
                     x:Name="txtGameList"
                     HorizontalTextAlignment="Left"
-                    IsReadOnly="True"/>
+                    IsReadOnly="True"
+                    IsEnabled="False"/>
         </ScrollViewer>
 
         <TextBlock
@@ -143,18 +144,20 @@
                     <ComboBox
                         x:Name="cmbPlatform"
                         HorizontalAlignment="Right"
-                        Width="160"/>
+                        Width="160"
+                        PlaceholderText="Select a Platform"/>
                 </StackPanel>
                 <StackPanel
-                    Orientation="Vertical"
+                    Orientation="Horizontal"
                     Margin="0,10,0,0">
                     <TextBlock
                         Text="Release Date:"
-                        Margin="0,0,0,10"
+                        Margin="0,0,20,0"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Center"/>
-                    <DatePicker
-                        x:Name="dtpReleaseDate"/>
+                    <CalendarDatePicker
+                        x:Name="dtpReleaseDate"
+                        Width="160"/>
                 </StackPanel>
                 <StackPanel 
                     Orientation="Horizontal"
