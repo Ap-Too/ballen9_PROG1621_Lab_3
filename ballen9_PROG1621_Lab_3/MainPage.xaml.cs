@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Lab3_ClassLibrary;
+using Windows.UI.ViewManagement;
+using Windows.ApplicationModel;
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -24,28 +26,28 @@ namespace ballen9_PROG1621_Lab_3
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        List<VideoGame> games = new List<VideoGame>();
+
         public MainPage()
         {
             this.InitializeComponent();
 
-            List<VideoGame> games = new List<VideoGame>();
+            ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(700, 500));
+
+            ApplicationView.PreferredLaunchViewSize = new Size(700, 500);
+            ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
+
+            Application.Current.Suspending += OnSuspending;
 
             // Load in the saved list of games
             ReadInList(games);
 
             // Sort the list of games and create a binary tree out of the sorted list
-            games.Sort();
+            if (games.Count > 0) games.Sort();
 
-            if (games.Count > 0)
-            {
-                BinarySearchTree tree = new BinarySearchTree(games);
+            BinarySearchTree tree = new BinarySearchTree(games);
 
-                // set the Binary Tree display method to be the displayed text in the program
-            }
-            else
-            {
-                // Display the default message because there is no games in the list
-            }
+            txtGameList.Text = tree.AllTheGames();
         }
 
         private async void ReadInList(List<VideoGame> games)
@@ -67,5 +69,9 @@ namespace ballen9_PROG1621_Lab_3
 
 
         // Any changes to the object collection should be saved to the local text file when the program closes
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
+        {
+            await FileReader.SaveGameList(games);
+        }
     }
 }
