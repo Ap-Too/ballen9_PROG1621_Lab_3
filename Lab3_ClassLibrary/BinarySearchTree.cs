@@ -7,7 +7,7 @@ using Windows.Media.Casting;
 
 namespace Lab3_ClassLibrary
 {
-    internal class BinarySearchTree
+    public class BinarySearchTree
     {
         private GameNode root;
 

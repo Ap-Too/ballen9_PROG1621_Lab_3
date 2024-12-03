@@ -48,7 +48,11 @@ namespace Lab3_ClassLibrary
                     DateTime release = DateTime.Parse(parts[3]);
                     Platform plat = Enum.Parse<Platform>(parts[4]);
 
-                    temp.Add(new VideoGame(title, genre, devel, release, plat));
+                    VideoGame newGame = new VideoGame(title, genre, devel, release, plat);
+
+                    if (!temp.Contains(newGame))
+                        temp.Add(newGame);
+                    else continue;
                 }
 
                 return temp;

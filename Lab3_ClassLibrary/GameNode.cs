@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Lab3_ClassLibrary
 {
-    internal class GameNode : IComparable<GameNode>
+    public class GameNode : IComparable<GameNode>
     {
         public VideoGame game;
         public GameNode left;
