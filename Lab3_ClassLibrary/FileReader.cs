@@ -1,11 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Windows.ApplicationModel.Appointments.AppointmentsProvider;
 using Windows.Storage;
-using Windows.UI.Popups;
 
 namespace Lab3_ClassLibrary
 {
@@ -29,9 +25,9 @@ namespace Lab3_ClassLibrary
             await FileIO.WriteTextAsync(storageFile, output);
         }
 
-        public static async Task ReadGameList()
+        public static async Task<List<VideoGame>> ReadGameList()
         {
-            List<VideoGame> temp;
+            List<VideoGame> temp = new List<VideoGame>();
 
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;
 
@@ -39,19 +35,27 @@ namespace Lab3_ClassLibrary
             {
                 StorageFile storageFile = await storageFolder.GetFileAsync("GameList.txt");
                 
-                // Use ReadAllLine() to get a string array split on new lines
+                var lines = await FileIO.ReadLinesAsync(storageFile);
 
-                // Read each string in the array
-                // split it by a delimiter
-                // Input seperate strings into the proper area of the new Video Game object
-                // Add each new video game to the temp list
+                foreach (var line in lines)
+                {
+                    var parts = line.Split('|');
+                    if (parts.Length != 5) continue;
 
-                // assign the temp list of games to the static list in the class
+                    string title = parts[0];
+                    string genre = parts[1];
+                    string devel = parts[2];
+                    DateTime release = DateTime.Parse(parts[3]);
+                    Platform plat = Enum.Parse<Platform>(parts[4]);
+
+                    temp.Add(new VideoGame(title, genre, devel, release, plat));
+                }
+
+                return temp;
             }
             catch (Exception ex)
             {
-                MessageDialog msg = new MessageDialog(ex.Message);
-                msg.ShowAsync();
+                return new List<VideoGame>();
             }
         }
     }
