@@ -80,11 +80,11 @@ namespace Lab3_ClassLibrary
             bool matches = true;
 
             // Check each condition
-            if (!string.IsNullOrEmpty(title) && !node.game.Title.Contains(title, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(title) && !node.game.Title.Equals(title, StringComparison.OrdinalIgnoreCase))
                 matches = false;
-            if (!string.IsNullOrEmpty(genre) && !node.game.Genre.Contains(genre, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(genre) && !node.game.Genre.Equals(genre, StringComparison.OrdinalIgnoreCase))
                 matches = false;
-            if (!string.IsNullOrEmpty(developer) && !node.game.Developer.Contains(developer, StringComparison.OrdinalIgnoreCase))
+            if (!string.IsNullOrEmpty(developer) && !node.game.Developer.Equals(developer, StringComparison.OrdinalIgnoreCase))
                 matches = false;
             if (platform.HasValue && node.game.Platform != platform.Value)
                 matches = false;
