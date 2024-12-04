@@ -38,14 +38,14 @@ namespace Lab3_ClassLibrary
         
         public int CompareTo(VideoGame other)
         {
-            if (this.Platform.CompareTo(other.Platform) < 0) return -1;
-            else if (this.Platform == other.Platform)
-            {
-                if (this.Developer.CompareTo(other.Developer) < 0) return -1;
-                else if (this.Developer == other.Developer)
+            if (this.Title.CompareTo(other.Title) < 0) return -1;
+            else if (this.Title == other.Title)
+            { 
+                if (this.Platform.CompareTo(other.Platform) < 0) return -1;
+                else if (this.Platform == other.Platform)
                 {
-                    if (this.Title.CompareTo(other.Title) < 0) return -1;
-                    else if (this.Title == other.Title)
+                    if (this.Developer.CompareTo(other.Developer) < 0) return -1;
+                    else if (this.Developer == other.Developer)
                         return this.ReleaseDate.CompareTo(other.ReleaseDate);
                     else return 1;
                 }
@@ -58,7 +58,7 @@ namespace Lab3_ClassLibrary
         {
             return (this.Title == other.Title && 
                 this.Developer == other.Developer && 
-                this.ReleaseDate == other.ReleaseDate && 
+                this.ReleaseDate.Date == other.ReleaseDate.Date && 
                 this.Platform == other.Platform);
         }
 

@@ -64,12 +64,11 @@ namespace Lab3_ClassLibrary
 
         public VideoGame Search(string title = null, string developer = null, string genre = null, Platform? platform = null, DateTime? releaseDate = null)
         {
-            VideoGame result = new VideoGame("temp", "temp", "temp", new DateTime(), Platform.Xbox);
-            Search(root, title, developer, genre, platform, releaseDate, result);
-            return result;
+            
+            return Search(root, title, developer, genre, platform, releaseDate);
         }
 
-        private VideoGame Search(GameNode node, string title, string developer, string genre, Platform? platform, DateTime? releaseDate, VideoGame result)
+        private VideoGame Search(GameNode node, string title, string developer, string genre, Platform? platform, DateTime? releaseDate)
         {
             if (node == null) return null;
 
@@ -88,14 +87,14 @@ namespace Lab3_ClassLibrary
                 matches = false;
 
             if (matches)
-            {
-                result = node.game;
-                return result;
-            }
+                return node.game;
 
-            VideoGame left = Search(node.left, title, genre, developer, platform, releaseDate, result);
-            if (left != null) return left;
-            return Search(node.right, title, genre, developer, platform, releaseDate, result);
+            VideoGame left = Search(node.left, title, genre, developer, platform, releaseDate);
+
+            if (left != null) 
+                return left;
+            
+            return Search(node.right, title, genre, developer, platform, releaseDate);
         }
     }
 }

@@ -10,15 +10,11 @@ using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
-
 namespace ballen9_PROG1621_Lab_3
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class MainPage : Page
     {
+        // Global properties
         List<VideoGame> games = new List<VideoGame>();
 
         BinarySearchTree tree;
@@ -27,11 +23,13 @@ namespace ballen9_PROG1621_Lab_3
         {
             this.InitializeComponent();
 
+            // Set the default window size and the minimum window size for the program
             ApplicationView.GetForCurrentView().SetPreferredMinSize(new Size(700, 500));
 
             ApplicationView.PreferredLaunchViewSize = new Size(700, 500);
             ApplicationView.PreferredLaunchWindowingMode = ApplicationViewWindowingMode.PreferredLaunchViewSize;
 
+            // Add a method to the event of the application closing
             Application.Current.Suspending += OnSuspending;
 
             // Load in the saved list of games
@@ -42,8 +40,10 @@ namespace ballen9_PROG1621_Lab_3
 
             tree = new BinarySearchTree(games);
 
+            // Display the Binar Search Tree in a string
             txtGameList.Text = tree.AllTheGames();
 
+            // Set the values and displays of the ComboBox based on the Platform Enum
             cmbPlatform.ItemsSource = Enum.GetValues(typeof(Platform))
                 .Cast<Platform>()
                 .Select(e => new
@@ -62,6 +62,11 @@ namespace ballen9_PROG1621_Lab_3
             cmbPlatform.SelectedIndex = -1;
         }
 
+        #region Read and Save List
+        /// <summary>
+        /// This method is called when the program starts and will load in an existing
+        /// list of games and add them to a Binary Search Tree for use in the application
+        /// </summary>
         private async void ReadInList()
         {
             games = await FileReader.ReadGameList();
@@ -69,17 +74,25 @@ namespace ballen9_PROG1621_Lab_3
             txtGameList.Text = tree.AllTheGames();
         }
 
-        // Any changes to the object collection should be saved to the local text file when the program closes
+        /// <summary>
+        /// This method is called when the application is closed and will save the updated list of games to the local file.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             await FileReader.SaveGameList(games);
         }
+        #endregion
 
-        // Create a control to search for a specific object.
-        // The user MUST specify at least two parameters for the search
-        // Validate both values before searching the Binary Tree
-        // The search is looking for EXACT MATCHES
-        // Display the result of the search in a message dialogue
+        #region Button Methods
+        /// <summary>
+        /// This method will search the BST for any game that matches the exact information given.
+        /// The user MUST specify at least two parameters for the search
+        /// Display the result of the search in a message dialogue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
             VideoGame temp;
@@ -92,7 +105,7 @@ namespace ballen9_PROG1621_Lab_3
                 fieldCount++;
             if (!string.IsNullOrWhiteSpace(txtDeveloper.Text))
                 fieldCount++;
-            if (dtpReleaseDate.Date != null)
+            if (dtpReleaseDate.Date != null && dtpReleaseDate.Date <= DateTimeOffset.Now.AddMonths(1))
                 fieldCount++;
             if (cmbPlatform.SelectedIndex != -1)
                 fieldCount++;
@@ -127,10 +140,16 @@ namespace ballen9_PROG1621_Lab_3
             }
         }
 
-        // Add in a method for the user to add in a new object to the list.
-        // Vaildate the information given by the user
-        // Add the new object if there are no duplicates in the list
-        // Use the display method to show the updated list after the new object is created
+        /// <summary>
+        /// This method activates after the add button is pressed.
+        /// It will check to see if all the relevant information is valid and filled out.
+        /// If the relevant information is not filled out then the user will receive a message dialogue,
+        /// informing them to completely fill out the information.
+        /// If the information is filled out it will attempt to add a new game to the BST as long as it does not exist
+        /// already in the BST. After which the list of games will be updated.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             // Check if all boxes are filled out correctly
@@ -152,22 +171,24 @@ namespace ballen9_PROG1621_Lab_3
             {
                 VideoGame newGame = new VideoGame(txtTitle.Text.Trim(), txtGenre.Text.Trim(), txtDeveloper.Text.Trim(), dtpReleaseDate.Date.Value.DateTime, (Platform)cmbPlatform.SelectedValue);
 
+                bool exists = false;
 
                 foreach (VideoGame game in games)
                 {
-                    if (game ==  newGame)
+                    if (newGame.Equals(game))
                     {
+                        exists = true;
                         MessageDialog msg = new MessageDialog($"This Game:\n{newGame.Title}\nalready exists in your list.");
                         msg.ShowAsync();
                     }
-                    else
-                    {
-                        games.Add(newGame);
-                        games.Sort();
-                        tree = new BinarySearchTree(games);
-                        txtGameList.Text = tree.AllTheGames();
-                        ClearFields();
-                    }
+                }
+                if (!exists)
+                {
+                    games.Add(newGame);
+                    games.Sort();
+                    tree = new BinarySearchTree(games);
+                    txtGameList.Text = tree.AllTheGames();
+                    ClearFields();
                 }
             }
             else
@@ -177,11 +198,22 @@ namespace ballen9_PROG1621_Lab_3
             }
         }
 
+        /// <summary>
+        /// Clear the input fields and reset them to their default value
+        /// when the button is clicked.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnClear_Click(object sender, RoutedEventArgs e)
         {
             ClearFields();
         }
+        #endregion
 
+        #region Custom Methods
+        /// <summary>
+        /// Reset the input fields on the application to their default values
+        /// </summary>
         private void ClearFields()
         {
             txtTitle.Text = string.Empty;
@@ -189,6 +221,8 @@ namespace ballen9_PROG1621_Lab_3
             txtDeveloper.Text = string.Empty;
             cmbPlatform.SelectedIndex = -1;
             dtpReleaseDate.Date = null;
+            txtTitle.Focus(FocusState.Programmatic);
         }
+        #endregion
     }
 }
