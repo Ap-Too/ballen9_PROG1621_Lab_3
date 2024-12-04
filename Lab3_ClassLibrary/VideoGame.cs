@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lab3_ClassLibrary
 {
@@ -34,25 +30,23 @@ namespace Lab3_ClassLibrary
 
 
         public override string ToString() => 
-            $"{Title}" +
-            $"\n\tDeveloper: {Developer}" +
-            $"\n\tPlatform: {Platform}" +
-            $"\n\tRelease Date: {ReleaseDate.ToShortDateString()}" +
-            $"\n\tGenre: {Genre}";
+            $"\t{Title}" +
+            $"\nGenre: {Genre}" +
+            $"\nDeveloper: {Developer}" +
+            $"\nPlatform: {Platform}" +
+            $"\nRelease Date: {ReleaseDate.ToShortDateString()}\n\n";
         
         public int CompareTo(VideoGame other)
         {
             if (this.Platform.CompareTo(other.Platform) < 0) return -1;
             else if (this.Platform == other.Platform)
             {
-                if (this.Title.CompareTo(other.Title) < 0) return -1;
-                else if (this.Title == other.Title)
+                if (this.Developer.CompareTo(other.Developer) < 0) return -1;
+                else if (this.Developer == other.Developer)
                 {
-                    if (this.Developer.CompareTo(other.Developer) < 0) return -1;
-                    else if (this.Developer == other.Developer)
-                    {
+                    if (this.Title.CompareTo(other.Title) < 0) return -1;
+                    else if (this.Title == other.Title)
                         return this.ReleaseDate.CompareTo(other.ReleaseDate);
-                    }
                     else return 1;
                 }
                 else return 1;

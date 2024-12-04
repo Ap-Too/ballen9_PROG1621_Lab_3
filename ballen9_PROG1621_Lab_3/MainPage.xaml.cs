@@ -35,7 +35,7 @@ namespace ballen9_PROG1621_Lab_3
             Application.Current.Suspending += OnSuspending;
 
             // Load in the saved list of games
-            ReadInList(games);
+            ReadInList();
 
             // Sort the list of games and create a binary tree out of the sorted list
             if (games.Count > 0) games.Sort();
@@ -60,13 +60,13 @@ namespace ballen9_PROG1621_Lab_3
             cmbPlatform.DisplayMemberPath = "Description";
             cmbPlatform.SelectedValuePath = "Value";
             cmbPlatform.SelectedIndex = -1;
-
-            dtpReleaseDate.MaxDate = new DateTimeOffset().AddMonths(1);
         }
 
-        private async void ReadInList(List<VideoGame> games)
+        private async void ReadInList()
         {
             games = await FileReader.ReadGameList();
+            tree = new BinarySearchTree(games);
+            txtGameList.Text = tree.AllTheGames();
         }
 
         // Any changes to the object collection should be saved to the local text file when the program closes
@@ -82,6 +82,7 @@ namespace ballen9_PROG1621_Lab_3
         // Display the result of the search in a message dialogue
         private void btnSearch_Click(object sender, RoutedEventArgs e)
         {
+            VideoGame temp;
             // Check if at least two boxes are filled out correctly
             int fieldCount = 0;
 
@@ -99,9 +100,15 @@ namespace ballen9_PROG1621_Lab_3
             // Search for the exact match if the field count is >= 2
             if (fieldCount >= 2)
             {
-                VideoGame temp = tree.Search(txtTitle.Text.Trim(),txtGenre.Text.Trim(),txtDeveloper.Text.Trim(),
-                    (Platform)cmbPlatform.SelectedValue, dtpReleaseDate.Date.Value.DateTime);
-
+                if (dtpReleaseDate.Date == null && cmbPlatform.SelectedIndex == -1)
+                    temp = tree.Search(txtTitle.Text.Trim(), txtDeveloper.Text.Trim(), txtGenre.Text.Trim());
+                else if (dtpReleaseDate.Date == null && cmbPlatform.SelectedIndex > -1)
+                    temp = tree.Search(txtTitle.Text.Trim(), txtDeveloper.Text.Trim(), txtGenre.Text.Trim(), (Platform)cmbPlatform.SelectedIndex);
+                else if (dtpReleaseDate.Date != null && cmbPlatform.SelectedIndex == -1)
+                    temp = tree.Search(txtTitle.Text.Trim(), txtDeveloper.Text.Trim(), txtGenre.Text.Trim(), null, dtpReleaseDate.Date.Value.DateTime);
+                else
+                    temp = tree.Search(txtTitle.Text.Trim(), txtDeveloper.Text.Trim(), txtGenre.Text.Trim(), (Platform)cmbPlatform.SelectedValue, dtpReleaseDate.Date.Value.DateTime);
+                
                 if (temp != null)
                 {
                     MessageDialog msg = new MessageDialog($"There is a match in your list.\n\n{temp.ToString()}");
@@ -110,6 +117,7 @@ namespace ballen9_PROG1621_Lab_3
                 else
                 {
                     MessageDialog msg = new MessageDialog($"There was no match for your search");
+                    msg.ShowAsync();
                 }
             }
             else
@@ -144,17 +152,22 @@ namespace ballen9_PROG1621_Lab_3
             {
                 VideoGame newGame = new VideoGame(txtTitle.Text.Trim(), txtGenre.Text.Trim(), txtDeveloper.Text.Trim(), dtpReleaseDate.Date.Value.DateTime, (Platform)cmbPlatform.SelectedValue);
 
-                // check it against the existing list, if it already exists don't add it otherwise add it
-                if (!games.Contains(newGame))
+
+                foreach (VideoGame game in games)
                 {
-                    games.Add(newGame);
-                    txtGameList.Text = tree.AllTheGames();
-                    ClearFields();
-                }
-                else
-                {
-                    MessageDialog msg = new MessageDialog($"This Game:\t {newGame.ToString()}\nalready exists in your list.");
-                    msg.ShowAsync();
+                    if (game ==  newGame)
+                    {
+                        MessageDialog msg = new MessageDialog($"This Game:\n{newGame.Title}\nalready exists in your list.");
+                        msg.ShowAsync();
+                    }
+                    else
+                    {
+                        games.Add(newGame);
+                        games.Sort();
+                        tree = new BinarySearchTree(games);
+                        txtGameList.Text = tree.AllTheGames();
+                        ClearFields();
+                    }
                 }
             }
             else
@@ -174,7 +187,7 @@ namespace ballen9_PROG1621_Lab_3
             txtTitle.Text = string.Empty;
             txtGenre.Text = string.Empty;
             txtDeveloper.Text = string.Empty;
-            cmbPlatform.SelectedIndex = 0;
+            cmbPlatform.SelectedIndex = -1;
             dtpReleaseDate.Date = null;
         }
     }

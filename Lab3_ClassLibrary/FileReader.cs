@@ -7,8 +7,6 @@ namespace Lab3_ClassLibrary
 {
     public class FileReader
     {
-        public static List<VideoGame> Games {  get; set; } = new List<VideoGame>();
-
         public static async Task SaveGameList(List<VideoGame> games)
         {
             StorageFolder storageFolder = ApplicationData.Current.LocalFolder;

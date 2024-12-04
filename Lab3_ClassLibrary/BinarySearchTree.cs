@@ -1,9 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Windows.Media.Casting;
 
 namespace Lab3_ClassLibrary
 {
@@ -45,7 +41,7 @@ namespace Lab3_ClassLibrary
         {
             Queue<GameNode> queue = new Queue<GameNode>();
 
-            string output = "LIST OF GAMES:\n\n";
+            string output = "";
 
             if (root == null) return $"There are no games in your list";
 
@@ -57,7 +53,7 @@ namespace Lab3_ClassLibrary
                 GameNode current = queue.Dequeue();
 
                 // Attach the nodes information to the outputstring
-                output += $"{current.ToString()}";
+                output += $"{current.game}";
 
                 if (current.right != null) queue.Enqueue(current.right);
                 if (current.left != null) queue.Enqueue(current.left);

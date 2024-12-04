@@ -45,8 +45,10 @@
                 <TextBox
                     x:Name="txtGameList"
                     HorizontalTextAlignment="Left"
+                    TextWrapping="Wrap"
                     IsReadOnly="True"
-                    IsEnabled="False"/>
+                    IsEnabled="False"
+                    MinHeight="150"/>
         </ScrollViewer>
 
         <TextBlock
